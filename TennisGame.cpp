@@ -1,4 +1,5 @@
 #include "DxLib.h"
+#include <stdlib.h>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -50,6 +51,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		DrawBox(racketX - racketW / 2, racketY - racketH / 2, racketX + racketW / 2, racketY + racketH / 2, 0x0080ff, TRUE); //ラケット
 
+		// ヒットチェック
+		int dx = ballX - racketX; // x軸方向の距離
+		int dy = ballY - racketY; // y軸方向の距離
+		if (-racketW / 2 - 10 < dx && dx < racketW / 2 + 10 && -20 < dy && dy < 0) ballVy = -5 - rand() % 5;
+				
 		ScreenFlip(); // 裏画面の内容を表画面に反映させる
 		WaitTimer(16); // 一定時間待つ
 		if (ProcessMessage() == -1) break; // Windowsから情報を受け取りエラーが起きたら終了
