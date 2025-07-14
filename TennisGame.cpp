@@ -19,6 +19,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int ballVy = 5;
 	int ballR = 10;
 
+	// ラケットを動かすための変数
+	int racketX = WIDTH / 2;
+	int racketY = HEIGHT - 50;
+	int racketW = 120;
+	int racketH = 12;
+
 	while (1) // メインループ
 	{
 		ClearDrawScreen(); // 画面をクリアする
@@ -30,6 +36,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (ballY < ballR && ballVy < 0) ballVy = -ballVy;
 		if (ballY > HEIGHT - ballR && ballVy > 0) ballVy = -ballVy;
 		DrawCircle(ballX, ballY, ballR, 0xff0000, TRUE); // ボール
+
+		// ラケットの処理
+		if (CheckHitKey(KEY_INPUT_LEFT) == 1) // 左キー押し下し
+		{
+			racketX = racketX - 10;
+			if (racketX < racketW / 2) racketX = racketW / 2;
+		}
+		if (CheckHitKey(KEY_INPUT_RIGHT) == 1) // 右キー押し下し
+		{
+			racketX = racketX + 10;
+			if (racketX > WIDTH - racketW / 2) racketX = WIDTH - racketW / 2;
+		}
+		DrawBox(racketX - racketW / 2, racketY - racketH / 2, racketX + racketW / 2, racketY + racketH / 2, 0x0080ff, TRUE); //ラケット
 
 		ScreenFlip(); // 裏画面の内容を表画面に反映させる
 		WaitTimer(16); // 一定時間待つ
