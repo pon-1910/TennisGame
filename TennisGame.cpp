@@ -26,6 +26,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int racketW = 120;
 	int racketH = 12;
 
+	int score = 0; // スコアを代入
+	int highScore = 1000; // ハイスコアを代入
+
 	while (1) // メインループ
 	{
 		ClearDrawScreen(); // 画面をクリアする
@@ -54,7 +57,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// ヒットチェック
 		int dx = ballX - racketX; // x軸方向の距離
 		int dy = ballY - racketY; // y軸方向の距離
-		if (-racketW / 2 - 10 < dx && dx < racketW / 2 + 10 && -20 < dy && dy < 0) ballVy = -5 - rand() % 5;
+		if (-racketW / 2 - 10 < dx && dx < racketW / 2 + 10 && -20 < dy && dy < 0)
+		{
+			ballVy = -5 - rand() % 5;
+			score = score + 100;
+			if (score > highScore) highScore = score; // ハイスコアの更新
+		}
+
+		SetFontSize(30); // スコアとハイスコアの文字の大きさ
+		DrawFormatString(10, 10, 0xffffff, "SCORE %d", score);
+		DrawFormatString(WIDTH - 200, 10, 0xffff00, "HI-Sc %d", highScore);
 				
 		ScreenFlip(); // 裏画面の内容を表画面に反映させる
 		WaitTimer(16); // 一定時間待つ
