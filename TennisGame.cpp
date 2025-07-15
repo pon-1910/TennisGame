@@ -34,9 +34,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int highScore = 1000; // ハイスコアを代入
 	int dx, dy; // ヒットチェック用の変数宣言
 
+	int imgBg = LoadGraph("image/bg.png"); // 背景画像の読み込み
+
+	// サウンドの読み込みと音量設定
+	int bgm = LoadSoundMem("sound/bgm.mp3");
+	int jin = LoadSoundMem("sound/gameover.mp3");
+	int se = LoadSoundMem("sound/hit.mp3");
+	ChangeVolumeSoundMem(128, bgm);
+	ChangeVolumeSoundMem(128, jin);
+
 	while (1) // メインループ
 	{
 		ClearDrawScreen(); // 画面をクリアする
+		DrawGraph(0, 0, imgBg, FALSE); // 背景の描画
 		timer++;
 
 		switch (scene)
@@ -58,6 +68,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				racketY = HEIGHT - 50;
 				score = 0;
 				scene = PLAY;
+				PlaySoundMem(bgm, DX_PLAYTYPE_LOOP); // BGMをループ再生
 			}
 			break;
 
@@ -73,9 +84,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				scene = OVER;
 				timer = 0;
+				StopSoundMem(bgm); // BGMを停止
+				PlaySoundMem(jin, DX_PLAYTYPE_BACK); // ジングルを出力
 				break;
 			}
 			DrawCircle(ballX, ballY, ballR, 0xff0000, TRUE); // ボール
+			DrawCircle(ballX - ballR / 4, ballY - ballR / 4, ballR / 2, 0xffa0a0, TRUE);
+			DrawCircle(ballX - ballR / 4, ballY - ballR / 4, ballR / 4, 0xffffff, TRUE);
 
 			// ラケットの処理
 			if (CheckHitKey(KEY_INPUT_LEFT) == 1) // 左キー押し下し
@@ -88,6 +103,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				racketX = racketX + 10;
 				if (racketX > WIDTH - racketW / 2) racketX = WIDTH - racketW / 2;
 			}
+			DrawBox(racketX - racketW / 2 - 2, racketY - racketH / 2 - 2, racketX + racketW / 2, racketY + racketH / 2, 0x40c0ff, TRUE);
+			DrawBox(racketX - racketW / 2, racketY - racketH / 2, racketX + racketW / 2 + 2, racketY + racketH / 2 + 2, 0x204080, TRUE);
 			DrawBox(racketX - racketW / 2, racketY - racketH / 2, racketX + racketW / 2, racketY + racketH / 2, 0x0080ff, TRUE); //ラケット
 
 			// ヒットチェック
@@ -98,6 +115,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				ballVy = -5 - rand() % 5;
 				score = score + 100;
 				if (score > highScore) highScore = score; // ハイスコアの更新
+				PlaySoundMem(se, DX_PLAYTYPE_BACK); // 効果音を出力
 			}
 			break;
 
